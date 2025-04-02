@@ -1,0 +1,7 @@
+Store 48 Data Analysis
+Average Sales Quantity for Store 48: 288.42
+premium_customers = 
+premium_customers = len(demand_data[demand_data["Store ID"] == 48][demand_data["Customer Segments"] == "Premium"])
+Total Products: {}, Average Sales: {}, Average Price of Products: {}, Number of Products Sold With Promotions: {}, Number of Products Sold in Festival: {}, Number of Products Sold in Holiday: {}, Number of Products affected by Competitors: {}, Number of Products affected by Weather: {}, Number of Products with Higher Demand: {}, Number of Regular Costumers: {}, Number of Premium Costumers: {}, Number of Budget Costumers: {}, Date of Maximum Sale: {}, Month of Maximum Sale: {}
+Process demand data to get top products by price
+Analyzing product data to find the most expensive products
