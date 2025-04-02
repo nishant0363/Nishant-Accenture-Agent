@@ -78,7 +78,6 @@ pydeck==0.9.1
 PyJWT==2.10.1
 pypdf==5.4.0
 python-dotenv==1.1.0
-pywin32==308
 PyYAML==6.0.2
 regex==2024.11.6
 safetensors==0.5.3
