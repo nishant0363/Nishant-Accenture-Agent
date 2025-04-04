@@ -283,117 +283,78 @@ def display_interactive_agent_output(thinking_text):
                 # Add to the full markdown content
                 full_history_markdown += f"## {item['title']}\n\n{item['content']}\n\n---\n\n"
             
-            # # Add download buttons
-            # from datetime import datetime
-            # timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            # Add download buttons
+            from datetime import datetime
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
             
-            # # HTML download option
-            # st.download_button(
-            #     label="Download as HTML",
-            #     data=f"""
-            #     <!DOCTYPE html>
-            #     <html>
-            #     <head>
-            #         <meta charset="UTF-8">
-            #         <title>Agent Reasoning History</title>
-            #         <style>
-            #             body {{ font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: 0 auto; }}
-            #             h1 {{ color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px; }}
-            #             h2 {{ color: #3498db; margin-top: 30px; }}
-            #             h4 {{ color: #7f8c8d; margin-top: 20px; margin-bottom: 5px; }}
-            #             pre {{ background-color: #f9f9f9; padding: 10px; border-radius: 5px; overflow-x: auto; }}
-            #             hr {{ border: 0; height: 1px; background: #eee; margin: 30px 0; }}
-            #             .success {{ background-color: #e8f8f5; padding: 10px; border-left: 5px solid #2ecc71; }}
-            #             .info {{ background-color: #eaf2f8; padding: 10px; border-left: 5px solid #3498db; }}
-            #             .error {{ background-color: #fadbd8; padding: 10px; border-left: 5px solid #e74c3c; }}
-            #         </style>
-            #     </head>
-            #     <body>
-            #         <h1>Agent Reasoning History</h1>
-            #         {full_history_markdown.replace("```", "<pre>").replace("```", "</pre>")}
-            #     </body>
-            #     </html>
-            #     """,
-            #     file_name=f"agent_reasoning_history_{timestamp}.html",
-            #     mime="text/html"
-            # )
+            # HTML download option
+            st.download_button(
+                label="Download as HTML",
+                data=f"""
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>Agent Reasoning History</title>
+                    <style>
+                        body {{ font-family: Arial, sans-serif; line-height: 1.6; padding: 20px; max-width: 800px; margin: 0 auto; }}
+                        h1 {{ color: #2c3e50; border-bottom: 1px solid #eee; padding-bottom: 10px; }}
+                        h2 {{ color: #3498db; margin-top: 30px; }}
+                        h4 {{ color: #7f8c8d; margin-top: 20px; margin-bottom: 5px; }}
+                        pre {{ background-color: #f9f9f9; padding: 10px; border-radius: 5px; overflow-x: auto; }}
+                        hr {{ border: 0; height: 1px; background: #eee; margin: 30px 0; }}
+                        .success {{ background-color: #e8f8f5; padding: 10px; border-left: 5px solid #2ecc71; }}
+                        .info {{ background-color: #eaf2f8; padding: 10px; border-left: 5px solid #3498db; }}
+                        .error {{ background-color: #fadbd8; padding: 10px; border-left: 5px solid #e74c3c; }}
+                    </style>
+                </head>
+                <body>
+                    <h1>Agent Reasoning History</h1>
+                    {full_history_markdown.replace("```", "<pre>").replace("```", "</pre>")}
+                </body>
+                </html>
+                """,
+                file_name=f"agent_reasoning_history_{timestamp}.html",
+                mime="text/html"
+            )
             
-            # # Markdown download option
-            # st.download_button(
-            #     label="Download as Markdown",
-            #     data=full_history_markdown,
-            #     file_name=f"agent_reasoning_history_{timestamp}.md",
-            #     mime="text/markdown"
-            # )
+            # Markdown download option
+            st.download_button(
+                label="Download as Markdown",
+                data=full_history_markdown,
+                file_name=f"agent_reasoning_history_{timestamp}.md",
+                mime="text/markdown"
+            )
             
             # Add clear history button
-            # if st.button("Clear History"):
-            #     st.session_state.agent_history = []
-            #     st.session_state.last_content_hash = ""
-            #     st.rerun()
+            if st.button("Clear History"):
+                st.session_state.agent_history = []
+                st.session_state.last_content_hash = ""
+                st.rerun()
         else:
             st.info("No history recorded yet. Run the agent to see results here.")
 
+# Function for use in main file
 def initialize_interactive_display():
+        
     # Main column - Agent Thinking Process
     with st.container():
         st.header("Agent Reasoning")
         
-        # Create a container for all agent thinking
+        # Create a container for the agent thinking
         thinking_container = st.container(height=480, border=True)
         
         with thinking_container:
-            # Display Agent 1 thinking
-            if "agent_thinking1" in st.session_state and st.session_state["agent_thinking1"]:
-                st.markdown("### Agent 1 Process")
-                thinking_text1 = "\n".join(st.session_state["agent_thinking1"])
-                display_interactive_agent_output(thinking_text1)
-                with st.expander("Agent 1 Raw Output", expanded=False):
-                    st.text_area("Agent 1 Complete Process", thinking_text1, height=200)
+            if "agent_thinking" in st.session_state and st.session_state["agent_thinking"]:
+                # Get the raw thinking text
+                thinking_text = "\n".join(st.session_state["agent_thinking"])
+
+                # with st.expander("Raw Output", expanded=False):
+                #     st.text_area("Complete Process", thinking_text, height=300)
                 
-                # Add divider between agents
-                st.divider()
-            
-            # Display Agent 2 thinking
-            if "agent_thinking2" in st.session_state and st.session_state["agent_thinking2"]:
-                st.markdown("### Agent 2 Process")
-                thinking_text2 = "\n".join(st.session_state["agent_thinking2"])
-                display_interactive_agent_output(thinking_text2)
-                with st.expander("Agent 2 Raw Output", expanded=False):
-                    st.text_area("Agent 2 Complete Process", thinking_text2, height=200)
-                
-                # Add divider between agents
-                st.divider()
-            
-            # Display Agent 3 thinking
-            if "agent_thinking3" in st.session_state and st.session_state["agent_thinking3"]:
-                st.markdown("### Agent 3 Process")
-                thinking_text3 = "\n".join(st.session_state["agent_thinking3"])
-                display_interactive_agent_output(thinking_text3)
-                with st.expander("Agent 3 Raw Output", expanded=False):
-                    st.text_area("Agent 3 Complete Process", thinking_text3, height=200)
-                
-                # Add divider between agents
-                st.divider()
-            
-            # Display Agent 4 thinking
-            if "agent_thinking4" in st.session_state and st.session_state["agent_thinking4"]:
-                st.markdown("### Agent 4 Process (Final Synthesis)")
-                thinking_text4 = "\n".join(st.session_state["agent_thinking4"])
-                display_interactive_agent_output(thinking_text4)
-                with st.expander("Agent 4 Raw Output", expanded=False):
-                    st.text_area("Agent 4 Complete Process", thinking_text4, height=200)
-                
-                # Add divider before final answer
-                st.divider()
-            
-            # Display the final answer
-            if "messages" in st.session_state and len(st.session_state["messages"]) > 0:
-                # Get the most recent assistant message
-                assistant_messages = [msg for msg in st.session_state["messages"] if msg["role"] == "assistant"]
-                if assistant_messages:
-                    final_answer = assistant_messages[-1]["content"]
-                    st.markdown("### Final Response")
-                    st.markdown(final_answer)
+                # Display interactive visualization
+                display_interactive_agent_output(thinking_text)
+                with st.expander("Raw Output", expanded=False):
+                    st.text_area("Complete Process", thinking_text, height=300)
             else:
-                st.info("Interactive display for agent reasoning. Run a query to see the agents' thinking processes.")
+                st.info("Interactive display for agent reasoning. Run a query to see the agent's thinking process.")
