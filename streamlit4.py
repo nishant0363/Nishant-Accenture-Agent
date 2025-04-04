@@ -149,24 +149,6 @@ pricing_and_market_performance_query_engine.update_prompts({"pandas_prompt": new
 from llama_index.core.tools import FunctionTool
 import os
 
-note_file = os.path.join("data", "notes.txt")
-
-def save_note(note):
-    if not os.path.exists(note_file):
-        open(note_file, "w")
-
-    with open(note_file, "a") as f:
-        f.writelines([note + "\n"])
-
-    return "note saved"
-
-
-note_engine = FunctionTool.from_defaults(
-    fn=save_note,
-    name="note_saver",
-    description="this tool can save a text based note to a file for the user",
-)
-
 
 # Update your tools list
 tools = [
@@ -332,6 +314,9 @@ st.markdown("""
             # background: white !important;
             # color: white !important;
         }
+        h1 {
+            font-size: 28px !important;
+        }
         hr {
             margin-top: 5px !important;
             margin-bottom: 5px !important;
@@ -348,18 +333,41 @@ left_col, right_col = st.columns([1, 1])
 
 
 with left_col:
-    st.header("Accenture AI")
-    if st.checkbox("Show chat memory contents"):
-        st.write(st.session_state["chat_memory"].get_all())
+    st.markdown("""
+    <h1 style='font-size: 6px;'>Accenture Research Agent</h1>
+    """, unsafe_allow_html=True)
+    # Display introductory message before chat
+
     # Initialize session state for messages
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
     
     # Create a container with fixed height for chat history
-    chat_container = st.container(height=350, border=True)
+    chat_container = st.container(height=300, border=True)
     
     # Display all messages inside the fixed-height container
     with chat_container:
+        st.info("""
+        Welcome to Accenture Research Agent!  
+        Feel free to query me regarding any questions. I am a Multi AI agent developed by Nishant from NIT SURAT, who is particpating in Accenture AI 
+        Hackathon. I would be glad to help you. I have knowledge of the following datasets.
+        """)
+        
+        # Display dataframe previews in expandable sections
+        with st.expander("Available Datasets", expanded=False):
+            tabs = st.tabs(["Products", "Inventory Audits", "Pricing & Market Data"])
+            
+            with tabs[0]:
+                st.subheader("Products Dataset")
+                st.dataframe(specific_products_df.head(3), use_container_width=True)
+            
+            with tabs[1]:
+                st.subheader("Inventory Audits Dataset")
+                st.dataframe(inventory_audits.head(3), use_container_width=True)
+            
+            with tabs[2]:
+                st.subheader("Pricing & Market Data Dataset")
+                st.dataframe(pricing_and_market_data.head(3), use_container_width=True)
         for message in st.session_state["messages"]:
             if message["role"] == "assistant":
                 with st.chat_message(message["role"], avatar="Accenture-logo.png"):  # Chatbot icon
@@ -461,12 +469,12 @@ with left_col:
         # Force rerun to update the chat history
         st.rerun()
 
-    # Footer
-    st.markdown("---")
-    st.markdown("© 2025 Accenture Retail Analytics Agent    |     Powered by Accenture AI     |     Logout (nishant0363)")
 
 # Right column - Agent Thinking Process 
 with right_col:
     initialize_interactive_display()
     
 
+# Footer
+st.markdown("---")
+st.markdown("© 2025 Accenture Retail Analytics Agent | Built by - Nishant - NIT SURAT | Email - nishant0363@gmail.com | Contact - 9306145426 ")

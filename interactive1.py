@@ -337,10 +337,13 @@ def display_interactive_agent_output(thinking_text):
 def initialize_interactive_display():
     # Main column - Agent Thinking Process
     with st.container():
-        st.header("Agent Reasoning")
+        st.markdown("""
+        <h1 style='font-size: 6px;'>Multi Agent Reasoning</h1>
+        """, unsafe_allow_html=True)
         
         # Create a container for all agent thinking
-        thinking_container = st.container(height=480, border=True)
+        thinking_container = st.container(height=320, border=True)
+        
         
         with thinking_container:
             # Display Agent 1 thinking
