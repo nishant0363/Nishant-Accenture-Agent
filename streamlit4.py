@@ -9,7 +9,7 @@ from llama_index.core.memory import ChatMemoryBuffer
 
 chat_memory = ChatMemoryBuffer.from_defaults(token_limit=2048)
 llm1 = Groq(model="gemma2-9b-it", api_key="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")
-llm2 = Groq(model="qwen-2.5-coder-32b", api_key="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")
+llm2 = Groq(model="llama3-70b-8192", api_key="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")
 
 
 specific_products_df = pd.read_csv("data/demand_forecasting.csv")
@@ -150,7 +150,7 @@ from llama_index.core.tools import FunctionTool
 import os
 
 
-# Update your tools list
+# Tools list
 tools = [
     QueryEngineTool(
         query_engine=specific_products_query_engine,
@@ -216,7 +216,6 @@ tools = [
 
 
 from interactive1 import initialize_interactive_display
-# Import necessary libraries (add these if not already imported)
 import streamlit as st
 import io
 import re
@@ -228,7 +227,6 @@ import queue
 import json
 import altair as alt
 from datetime import datetime
-
 import re
 from dataclasses import dataclass
 from typing import List, Dict, Optional
@@ -288,7 +286,6 @@ if "agent_thinking2" not in st.session_state:
 if "agent_thinking3" not in st.session_state:
     st.session_state["agent_thinking3"] = []
     
-# When starting a new query:
 if "current_query_index" not in st.session_state:
     st.session_state["current_query_index"] = 0
     st.session_state["query_thinking_ranges"] = []
@@ -336,13 +333,11 @@ with left_col:
     st.markdown("""
     <h1 style='font-size: 6px;'>Accenture Research Agent</h1>
     """, unsafe_allow_html=True)
-    # Display introductory message before chat
 
     # Initialize session state for messages
     if "messages" not in st.session_state:
         st.session_state["messages"] = []
     
-    # Create a container with fixed height for chat history
     chat_container = st.container(height=300, border=True)
     
     # Display all messages inside the fixed-height container
@@ -379,12 +374,11 @@ with left_col:
     
     # User input outside the scrolling chat container
     if prompt := st.chat_input("What can I help you with?"):
-        # Add user message to session state
+        # Adding user message to session state
         st.session_state["messages"].append({"role": "user", "content": prompt})
         
-        # Process response
         with st.spinner("Thinking..."):
-            # Initialize responses and thinking for all agents
+            # Initialized responses and thinking for all agents
             response1 = None
             response2 = None
             response3 = None
@@ -392,14 +386,14 @@ with left_col:
             
             # AGENT 1
             try:
-                # Create a buffer to capture stdout
+                # A buffer to capture stdout
                 buffer1 = io.StringIO()
                 
-                # Redirect stdout to our buffer and run the agent
+                # Redirected stdout to our buffer and ran the agent
                 with redirect_stdout(buffer1):
                     response1 = agent1.query(prompt)
                 
-                # Get the captured output and log it
+                # Got the captured output and logged it
                 captured_output1 = buffer1.getvalue()
                 structured_steps1 = parse_agent_output(captured_output1)
                 st.session_state["agent_thinking1"] = structured_steps1.splitlines()
@@ -413,18 +407,22 @@ with left_col:
                 buffer2 = io.StringIO()
                 # Redirect stdout to our buffer and run the agent
                 with redirect_stdout(buffer2):
-                    # Use response2 if available, otherwise use the original prompt
-                    response2 = agent2.query(
-                        f"""
-                        Provide a comprehensive answer to the user's query: "{prompt}"
-                        Use required tools from the set of tools provided to you.
-                        """
-                    )
+                    if response1 == "Failed to process":
+                        # Use response2 if available, otherwise use the original prompt
+                        response2 = agent2.query(
+                            f"""
+                            Provide a comprehensive answer to the user's query: "{prompt}"
+                            Use required tools from the set of tools provided to you.
+                            """
+                        )
+                        # Get the captured output and log it
+                        captured_output2 = buffer2.getvalue()
+                        structured_steps2 = parse_agent_output(captured_output2)
+                        st.session_state["agent_thinking2"] = structured_steps2.splitlines()
+                    else:
+                        response2 = "Agent 1 has already performed the task"
+                        st.session_state["agent_thinking2"] = "Agent 1 has already performed the task"
                 
-                # Get the captured output and log it
-                captured_output2 = buffer2.getvalue()
-                structured_steps2 = parse_agent_output(captured_output2)
-                st.session_state["agent_thinking2"] = structured_steps2.splitlines()
             except Exception as e:
                 st.session_state["agent_thinking2"] = [f"Agent 2 encountered an error: {str(e)}"]
                 response2 = "Failed to process"
@@ -441,7 +439,7 @@ with left_col:
                         {' '.join(st.session_state["agent_thinking1"])}
                         
                         Agent 2 Thinking:
-                        {' '.join(st.session_state["agent_thinking3"])}
+                        {' '.join(st.session_state["agent_thinking2"])}
                         
                         Based on these analysis results (note that some agents may have failed), 
                         provide a comprehensive answer to the user's query: "{prompt}"
@@ -458,7 +456,12 @@ with left_col:
                 response3 = "I apologize, but I'm having trouble processing your request right now. Could you please try again?"
 
             # Use response3 if available, otherwise provide a fallback message
-            final_response = response3 if response3 and response3 != "Failed to process" else "I apologize, but I'm having trouble processing your request right now. Could you please try again?"
+            if response3 and response3 != "Failed to process":
+                final_response = response3 
+            elif response1:
+                final_response = response1
+            else:
+                final_response = "I apologize, but I'm having trouble processing your request right now. Could you please try again?"
         
         # Add assistant response to session state
         st.session_state["messages"].append({"role": "assistant", "content": final_response})
