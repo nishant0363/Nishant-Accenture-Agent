@@ -105,9 +105,9 @@ Groq LLMs offer ultra-fast execution, which is essential for real-time analytics
 
 ## 📊 Example Use Cases
 
-- “What were the top 5 products by sales in Q1 2023?”
-- “Which region had the most frequent inventory stockouts?”
-- “Compare our January pricing to competitor benchmarks.”
+- “What were the top 5 products by sales”
+- “low sales products?”
+- “Store 48 sales?”
 
 **Workflow**:  
 Natural language → LLM interpretation → Pandas code generation → Result display
