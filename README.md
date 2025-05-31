@@ -81,10 +81,7 @@ Groq LLMs offer ultra-fast execution, which is essential for real-time analytics
 ## 💻 Code and Deployment
 
 ### 🔗 GitHub Repository  
-👉 [GitHub Link](https://github.com/your-username/ai-retail-analytics) *(Replace with your actual link)*
-
-### 🔗 Live Demo  
-👉 [Deployed App]([https://your-streamlit-app-url](https://nishant-accenture-agent.streamlit.app/)) *(Replace with your actual link)*
+👉 [GitHub Link]([https://github.com/your-username/ai-retail-analytics](https://github.com/nishant0363/Nishant-Accenture-Agent)) 
 
 ---
 
